@@ -12,7 +12,7 @@ const saveUser = async (req, res, next) => {
     });
 
     if (username) {
-      return res.json(409).send("Username already taken");
+      return res.json(409).send({ error: "Username already taken" });
     }
 
     const emailCheck = await User.findOne({
@@ -22,7 +22,7 @@ const saveUser = async (req, res, next) => {
     });
 
     if (emailCheck) {
-      return res.json(409).send("Authentication failed");
+      return res.json(409).send({ error: "Email already taken" });
     }
 
     next();

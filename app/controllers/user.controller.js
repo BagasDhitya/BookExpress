@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../models");
 
+const { Op } = require("sequelize");
+
 const User = db.user;
 
 const signup = async (req, res) => {
@@ -59,11 +61,11 @@ const login = async (req, res) => {
         res.status(201).send(user);
         return;
       } else if (isSame === false) {
-        res.status(401).send({ error: "Invalid password, please try again!" });
+        res.status(401).send({ error: "Invalid password, please try again" });
         return;
       }
     } else {
-      res.status(401).send({ error: "Invalid email, please try again!" });
+      res.status(401).send({ error: "Invalid email, please try again" });
       return;
     }
   } catch (error) {
@@ -71,7 +73,31 @@ const login = async (req, res) => {
   }
 };
 
+const user = async (req, res) => {
+  const { id } = req.body;
+
+  const user = await User.findOne({
+    where: {
+      id,
+      [Op.or]: [
+        {
+          id: id,
+        },
+      ],
+    },
+  });
+
+  const data = user?.dataValues;
+
+  if (id === data?.id) {
+    res.status(200).send({ data: data });
+  } else if (id !== data?.id) {
+    res.status(404).send({ error: "Id not found, please check again" });
+  }
+};
+
 module.exports = {
   signup,
   login,
+  user,
 };
