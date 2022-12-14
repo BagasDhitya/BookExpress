@@ -15,7 +15,7 @@ const signup = async (req, res) => {
     const user = await User.create(data);
 
     if (user) {
-      let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
+      let token = jwt.sign({ id: user.id }, `${process.env.PrivateKey}`, {
         expiresIn: 1 * 24 * 60 * 60 * 1000,
       });
 
@@ -48,7 +48,7 @@ const login = async (req, res) => {
       //generate token with the user's id and the secretKey in the env file
 
       if (isSame) {
-        let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
+        let token = jwt.sign({ id: user.id }, `${process.env.PrivateKey}`, {
           expiresIn: 1 * 24 * 60 * 60 * 1000,
         });
 
