@@ -42,11 +42,10 @@ const login = async (req, res) => {
     //if user email is found, compare password with bcrypt
     if (user) {
       const isSame = await bcrypt.compare(password, user.password);
-
       //if password is the same
       //generate token with the user's id and the secretKey in the env file
 
-      if (isSame) {
+      if (isSame === true) {
         let token = jwt.sign({ id: user.id }, `${process.env.PrivateKey}`, {
           expiresIn: 1 * 24 * 60 * 60 * 1000,
         });
@@ -59,12 +58,12 @@ const login = async (req, res) => {
         //send user data
         res.status(201).send(user);
         return;
-      } else {
-        res.status(201).send(user);
+      } else if (isSame === false) {
+        res.status(401).send({ error: "Invalid password, please try again!" });
         return;
       }
     } else {
-      res.status(201).send(user);
+      res.status(401).send({ error: "Invalid email, please try again!" });
       return;
     }
   } catch (error) {
