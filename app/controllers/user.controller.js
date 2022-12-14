@@ -36,9 +36,8 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     //find a user by their email
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ raw: true, where: { email } });
 
     //if user email is found, compare password with bcrypt
     if (user) {
